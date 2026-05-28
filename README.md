@@ -1,4 +1,4 @@
-# Prueba Técnica — Backend Senior Python
+# Prueba Técnica — Backend
 
 **Tiempo estimado:** 1 hora
 **Stack:** Python 3.11+, FastAPI, SQLAlchemy 2.x, Pydantic v2, pytest, Docker
