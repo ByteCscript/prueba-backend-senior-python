@@ -1,13 +1,26 @@
-"""
-SQLAlchemy models.
+from sqlalchemy import Integer, JSON, String
+from sqlalchemy.orm import Mapped, mapped_column
 
-TODO: Define the Application model here.
+from app.database import Base
 
-Hint: needs to persist enough info to answer GET /applications/{id}, including
-the original input, the decision (APPROVED / REJECTED) and the rejection
-reasons when applicable.
-"""
 
-from app.database import Base  # noqa: F401
+class Application(Base):
+    __tablename__ = "applications"
 
-# Your models here...
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    monthly_income: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    employment_months: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    external_score: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    product: Mapped[str] = mapped_column(String, nullable=False)
+
+    status: Mapped[str] = mapped_column(String, nullable=False)
+
+    rejection_reasons: Mapped[list[str]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
