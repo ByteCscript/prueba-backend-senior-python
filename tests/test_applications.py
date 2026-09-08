@@ -152,3 +152,29 @@ def test_invalid_amount_returns_422():
     response = client.post("/applications", json=payload)
 
     assert response.status_code == 422
+
+
+def test_reevaluate_application():
+    payload = {
+        "amount": 1_200_000,
+        "monthly_income": 4_000_000,
+        "employment_months": 24,
+        "external_score": 750,
+        "product": "PHONE",
+    }
+
+    create_response = client.post("/applications", json=payload)
+
+    assert create_response.status_code == 201
+
+    application_id = create_response.json()["id"]
+
+    response = client.post(f"/applications/{application_id}/reevaluate")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["id"] == application_id
+    assert data["status"] == "APPROVED"
+    assert data["product"] == "PHONE"

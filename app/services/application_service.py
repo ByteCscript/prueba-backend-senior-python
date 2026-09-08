@@ -1,7 +1,7 @@
 from app.models import Application
 from app.repositories.application_repository import ApplicationRepository
-from app.schemas import ApplicationCreate
 from app.strategies.factory import get_policy
+from app.schemas import ApplicationCreate, ProductType
 
 
 class ApplicationService:
@@ -47,3 +47,29 @@ class ApplicationService:
             status=status,
             product=product,
         )
+
+    def reevaluate_application(
+        self,
+        application_id: int,
+    ) -> Application | None:
+
+        application = self.repository.get_by_id(application_id)
+
+        if application is None:
+            return None
+
+        data = ApplicationCreate(
+            amount=application.amount,
+            monthly_income=application.monthly_income,
+            employment_months=application.employment_months,
+            external_score=application.external_score,
+            product=ProductType(application.product),
+        )
+
+        policy = get_policy(data.product)
+        evaluation = policy.evaluate(data)
+
+        application.status = evaluation.status.value
+        application.rejection_reasons = evaluation.rejection_reasons
+
+        return self.repository.update(application)

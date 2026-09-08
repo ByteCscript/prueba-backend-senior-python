@@ -38,6 +38,25 @@ def create_application(
     return service.create_application(data)
 
 
+@router.post(
+    "/{application_id}/reevaluate",
+    response_model=ApplicationResponse,
+)
+def reevaluate_application(
+    application_id: int,
+    service: ApplicationService = Depends(get_service),
+):
+    application = service.reevaluate_application(application_id)
+
+    if application is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Application not found",
+        )
+
+    return application
+
+
 @router.get(
     "/{application_id}",
     response_model=ApplicationResponse,

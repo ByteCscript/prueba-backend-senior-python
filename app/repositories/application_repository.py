@@ -35,3 +35,9 @@ class ApplicationRepository:
             statement = statement.where(Application.product == product)
 
         return list(self.db.scalars(statement).all())
+
+    def update(self, application: Application) -> Application:
+        self.db.add(application)
+        self.db.commit()
+        self.db.refresh(application)
+        return application
